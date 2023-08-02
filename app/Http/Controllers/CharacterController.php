@@ -10,13 +10,12 @@ class CharacterController extends Controller
     // Obtener todos los personajes de la API de Rick and Morty
     public function index(Request $request)
     {
-        $searchQuery = $request->input('search_query');
-        $species = $request->input('species');
-
-        $charactersData = $this->getCharactersFromAPI([
-            'name' => $searchQuery,
-            'species' => $species
+        $validatedData = $request->validate([
+            'search_query' => 'nullable|string|max:255',
+            'species' => 'nullable|string|max:255',
         ]);
+
+        $charactersData = $this->getCharactersFromAPI($validatedData);
 
         $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
         $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
@@ -31,6 +30,30 @@ class CharacterController extends Controller
         return view('characters.show', compact('characterData'));
     }
 
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'search_query' => 'nullable|string|max:255',
+            'species' => 'nullable|string|max:255',
+        ]);
+
+        $charactersData = $this->getCharactersFromAPI($validatedData);
+
+        if (empty($charactersData['results'])) {
+            return response()->json(['Sin resultados' => 'No se encontraron personajes que coincidan con la búsqueda.']);
+        }
+
+        $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
+        $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
+
+        return view('characters.index', compact('charactersData', 'characterNames', 'speciesList'));
+    }
+
+    public function filter(Request $request)
+    {
+        return $this->search($request);
+    }
+
     // Obtener personajes desde la API de Rick and Morty
     private function getCharactersFromAPI($params = [])
     {
@@ -43,41 +66,5 @@ class CharacterController extends Controller
     {
         $response = Http::get("https://rickandmortyapi.com/api/character/{$id}");
         return $response->json();
-    }
-
-    public function search(Request $request)
-    {
-        $searchQuery = $request->input('search_query');
-        $species = $request->input('species');
-
-        $charactersData = $this->getCharactersFromAPI([
-            'name' => $searchQuery,
-            'species' => $species
-        ]);
-
-        if (empty($charactersData['results'])) {
-            return "sin resultados";
-        }
-        $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
-        
-        $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
-
-        return view('characters.index', compact('charactersData', 'characterNames', 'speciesList'));
-    }
-
-    public function filter(Request $request)
-    {
-        $searchQuery = $request->input('search_query');
-        $species = $request->input('species');
-
-        $charactersData = $this->getCharactersFromAPI([
-            'name' => $searchQuery,
-            'species' => $species
-        ]);
-
-        $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
-        $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
-
-        return view('characters.index', compact('charactersData', 'characterNames', 'speciesList'));
     }
 }

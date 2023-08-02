@@ -1,0 +1,58 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="container mt-4">
+        <h1 class="mb-4">Personajes de Rick and Morty</h1>
+
+        <!-- Agregar el formulario de búsqueda -->
+        <form class="mb-3" action="{{ route('characters.search') }}" method="GET">
+            <div class="input-group">
+                <input type="text" name="search_query" class="form-control" placeholder="Buscar personajes por nombre">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+
+        <!-- Agregar el formulario de filtro -->
+        <form class="mb-3" action="{{ route('characters.filter') }}" method="GET">
+            <div class="input-group">
+                <select name="species" class="form-select">
+                    <option value="">Todas las especies</option>
+                    @foreach ($speciesList as $species)
+                        <option value="{{ $species }}">{{ $species }}</option>
+                    @endforeach
+                </select>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+        </form>
+
+        <!-- Mostrar los resultados de la búsqueda y/o filtro -->
+        @if (isset($charactersData['results']) && count($charactersData['results']) > 0)
+            <div class="row">
+                @foreach ($charactersData['results'] as $character)
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <a href="{{ route('characters.show', $character['id']) }}">
+                                <img src="{{ $character['image'] }}" class="card-img-top" alt="{{ $character['name'] }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $character['name'] }}</h5>
+                                <p class="card-text">
+                                    <span class="badge bg-{{ $character['status'] === 'Alive' ? 'success' : 'danger' }}">
+                                        {{ $character['status'] }}
+                                    </span>
+                                    - {{ $character['species'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p>No se encontraron resultados.</p>
+        @endif
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/search.js') }}"></script>
+@endsection

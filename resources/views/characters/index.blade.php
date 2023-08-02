@@ -59,18 +59,6 @@
                     </div>
                 @endforeach
             </div>
-        @else
-            <!-- SweetAlert para mostrar cuando no hay resultados -->
-            <script>
-                $(document).ready(function() {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'No se encontraron resultados.',
-                        confirmButtonColor: '#007bff',
-                    });
-                });
-            </script>
         @endif
     </div>
 @endsection

@@ -2,69 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CharacterHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class CharacterController extends Controller
 {
-    // Obtener todos los personajes de la API de Rick and Morty
+
+    // Mostrar la lista de todos los personajes
     public function index(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'search_query' => 'nullable|string|max:255',
             'species' => 'nullable|string|max:255',
         ]);
 
-        $charactersData = $this->getCharactersFromAPI($validatedData);
+        $characters_data = CharacterHelper::getCharactersFromAPI($validated);
 
-        $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
-        $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
+        if (empty($characters_data['results'])) {
+            return response()->json(['Sin resultados' => 'No se encontraron personajes que coincidan con la búsqueda.']);
+        }
 
-        return view('characters.index', compact('charactersData', 'characterNames', 'speciesList'));
+        $character_names = collect($characters_data['results'])->pluck('name')->toArray();
+        $species_list = collect($characters_data['results'])->pluck('species')->unique()->toArray();
+
+        return view('characters.index', compact('characters_data', 'character_names', 'species_list'));
     }
 
     // Mostrar los detalles del personaje seleccionado
     public function show($id)
     {
-        $characterData = $this->getCharacterDetailsFromAPI($id);
-        return view('characters.show', compact('characterData'));
+        $character = CharacterHelper::getCharacterDetailsFromAPI($id);
+        return view('characters.show', compact('character'));
     }
 
+    // Obtener todos los personajes o filtrar según los parámetros de búsqueda
     public function search(Request $request)
     {
-        $validatedData = $request->validate([
-            'search_query' => 'nullable|string|max:255',
-            'species' => 'nullable|string|max:255',
-        ]);
-
-        $charactersData = $this->getCharactersFromAPI($validatedData);
-
-        if (empty($charactersData['results'])) {
-            return response()->json(['Sin resultados' => 'No se encontraron personajes que coincidan con la búsqueda.']);
-        }
-
-        $characterNames = collect($charactersData['results'])->pluck('name')->toArray();
-        $speciesList = collect($charactersData['results'])->pluck('species')->unique()->toArray();
-
-        return view('characters.index', compact('charactersData', 'characterNames', 'speciesList'));
+        return $this->index($request);
     }
 
+    // Filtrar los personajes (redirige a la función search)
     public function filter(Request $request)
     {
         return $this->search($request);
-    }
-
-    // Obtener personajes desde la API de Rick and Morty
-    private function getCharactersFromAPI($params = [])
-    {
-        $response = Http::get('https://rickandmortyapi.com/api/character', $params);
-        return $response->json();
-    }
-
-    // Obtener detalles del personaje desde la API de Rick and Morty
-    private function getCharacterDetailsFromAPI($id)
-    {
-        $response = Http::get("https://rickandmortyapi.com/api/character/{$id}");
-        return $response->json();
     }
 }

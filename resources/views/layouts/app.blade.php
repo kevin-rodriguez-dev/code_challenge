@@ -4,14 +4,36 @@
 <head>
     <title>Tu título</title>
     <!-- Enlaces a los estilos de Bootstrap a través del CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importar la fuente Roboto desde Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo personalizado para la navbar */
+        .navbar {
+            background: #C0C0C0;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        .navbar-nav .nav-item .nav-link {
+            color: rgb(32, 35, 41);
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #808080;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+    </style>
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<body
+    style="background: #808080; font-variant-ligatures: none; text-rendering: optimizelegibility; -webkit-font-smoothing: antialiased; text-decoration-skip-ink: auto;">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <!-- Logo o título del sitio -->
-            <a class="navbar-brand" href="{{ route('home') }}">Tu Sitio</a>
 
             <!-- Botón para colapsar la navbar en dispositivos móviles -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -21,13 +43,11 @@
 
             <!-- Elementos de la navbar -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav">
                     <!-- Enlace a la página principal de personajes -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('characters.index') }}">Personajes</a>
+                        <a class="nav-link" href="{{ route('characters.index') }}"><strong>PERSONAJES</strong></a>
                     </li>
-                    <!-- Otros enlaces de la navbar -->
-                    <!-- Agrega más enlaces aquí si es necesario -->
                 </ul>
             </div>
         </div>
@@ -40,7 +60,7 @@
 
     <!-- Agregar los scripts de Bootstrap y jQuery desde el CDN -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

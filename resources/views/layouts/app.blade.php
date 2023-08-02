@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Tu título</title>
+    <title>The Rick and Morty API</title>
     <!-- Enlaces a los estilos de Bootstrap a través del CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Importar la fuente Roboto desde Google Fonts -->

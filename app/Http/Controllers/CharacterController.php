@@ -7,23 +7,33 @@ use Illuminate\Http\Request;
 
 class CharacterController extends Controller
 {
-
     // Mostrar la lista de todos los personajes
     public function index(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'search_query' => 'nullable|string|max:255',
             'species' => 'nullable|string|max:255',
         ]);
 
-        $characters_data = CharacterHelper::getCharactersFromAPI($validated);
+        $searchQuery = $request->input('search_query');
+        $species = $request->input('species');
+
+        $characters_data = CharacterHelper::getCharactersFromAPI([
+            'name' => $searchQuery,
+            'species' => $species,
+        ]);
 
         if (empty($characters_data['results'])) {
-            return response()->json(['Sin resultados' => 'No se encontraron personajes que coincidan con la búsqueda.']);
+            return response()->json(['Sin resultados' => 'No se encontraron personajes que coincidan con la búsqueda.'], 404);
         }
 
-        $character_names = collect($characters_data['results'])->pluck('name')->toArray();
-        $species_list = collect($characters_data['results'])->pluck('species')->unique()->toArray();
+        $character_names = collect($characters_data['results'])
+            ->pluck('name')
+            ->toArray();
+        $species_list = collect($characters_data['results'])
+            ->pluck('species')
+            ->unique()
+            ->toArray();
 
         return view('characters.index', compact('characters_data', 'character_names', 'species_list'));
     }
